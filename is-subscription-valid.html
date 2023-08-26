@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
+    <script defer src="https://pyscript.net/latest/pyscript.js"></script>
+</head>
+<body>
+    <div class="navbar">
+      <div class="logo">GSM</div>
+      <div class="login"><a href="/index.html" style="color: white; text-decoration: none;">Home</a></div>
+    </div>
+    <!-- Confirmation Content -->
+    <div id="valid" class="confirmation-content false">
+        <div class="checkmark-icon"><i class="fas fa-check"></i></div>
+        <div class="date-field">
+          <h3>Date of experation</h3>
+          <span id="date-to">[Your Date Here]</span>
+        </div>
+    </div>
+    <!-- Error Content -->
+    <div id="notValid" class="error-content false">
+      <div class="error-icon"><i class="fas fa-times"></i></div>
+      <div class="error-message">There is no valid subscription under that name!</div>
+  </div>
+    <py-env>
+        - qrcode
+        - pillow
+      </py-env>
+      <py-config>
+        plugins = [
+          "https://pyscript.net/latest/plugins/python/py_tutor.py"
+        ]
+        packages = ["requests", "pyodide-http"]
+        [[interpreters]]
+        src = "https://cdn.jsdelivr.net/pyodide/v0.23.0/full/pyodide.js"
+        name = "pyodide-0.23.0"
+        lang = "python"
+    </py-config>
+    <py-script>
+        from js import console, fetch, XMLHttpRequest, Blob, window, URLSearchParams, location
+        import json
+        from pyscript import Element
+
+        qs = URLSearchParams.new(location.search)
+        id = qs.get('id')
+        console.log(id)
+        req = XMLHttpRequest.new()
+        req.open("GET", f"http://127.0.0.1:8000/api/user-subscriptions/{id}/", False)
+        req.setRequestHeader("Content-Type", "application/json;charset=UTF-8")
+        blob = Blob.new({type : 'application/json'})
+        console.log(blob)
+        req.send(blob)
+        a = (req.response)
+        not_valid = Element('notValid')
+        valid = Element('valid')
+        if req.status == 200:
+          console.log(json.loads(a)[0].get('date_to'))
+          date_to = Element('date-to')
+          date_to.write(json.loads(a)[0].get('date_to'))
+          valid.remove_class("false")
+          valid.add_class("true")
+          not_valid.remove_class("true")
+          not_valid.add_class("false")
+        else:
+          not_valid.remove_class("false")
+          not_valid.add_class("true")
+          valid.remove_class("true")
+          valid.add_class("false")
+
+    </py-script>
+</body>
+</html>

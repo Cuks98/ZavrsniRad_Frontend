@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Member Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
+    <script defer src="https://pyscript.net/alpha/pyscript.js"></script>
+</head>
+
+<body>
+    <py-env>
+        - qrcode
+        - pillow
+    </py-env>
+    <py-config>
+        plugins = [
+          "https://pyscript.net/latest/plugins/python/py_tutor.py"
+        ]
+        packages = ["requests", "pyodide-http"]
+    </py-config>
+    <div class="navbar">
+        <div class="logo">GSM</div>
+    </div>
+    <div class="user-dashboard">
+        <div class="user-icon-wrapper">
+            <i class="fas fa-user"></i>
+        </div>
+        <div class="user-info">
+            <span class="user-email">member@example.com</span>
+            <div class="user-gyms">
+                <!-- This is where you'd list out the gyms the user is enrolled in -->
+                <ul>
+                    <li>Gym A</li>
+                    <li>Gym B</li>
+                </ul>
+            </div>
+            <button id="qrBtn" class="display-qr">Display QR Code</button>
+        </div>
+    </div>
+    <img id="qrCodeImage"src="images/MyQRCode1.png" alt="">
+    <py-script>
+        from pyodide import create_proxy
+        from js import console, fetch, XMLHttpRequest, Blob, window
+        import json
+        import qrcode
+        import base64 
+
+        # Naprawiam oryginalną zepsutą metodę render_image
+        def render_image(mime, value, meta):
+            data = f"data:{mime};base64,{base64.b64encode(value).decode('utf-8')}"
+            return f"\u003cimg src='{data}'\u003e"
+        
+        qrBtn = document.getElementById('qrBtn')
+        qrCodeImage = document.getElementById('qrCodeImage')
+
+        def getQrCode(event):
+            console.log("getQrCode")
+            window.location.href = "/test3.html"
+         
+        qrProxy = create_proxy(getQrCode)
+        qrBtn.addEventListener('click', qrProxy)
+
+    </py-script>
+</body>
+
+</html>

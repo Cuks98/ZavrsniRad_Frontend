@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
+    <script defer src="https://pyscript.net/latest/pyscript.js"></script>
+</head>
+
+<body>
+    <py-config>
+        plugins = [
+          "https://pyscript.net/latest/plugins/python/py_tutor.py"
+        ]
+        packages = ["requests", "pyodide-http"]
+        [[fetch]]
+        files = ["./utils.py"]
+    </py-config>
+    <py-script>
+        from js import document, console
+        from datetime import datetime as dt
+        from pyodide.ffi.wrappers import add_event_listener
+        import requests
+        import pyodide_http
+
+        # Patch the Requests library so it works with Pyscript
+        pyodide_http.patch_all()
+
+        def add_task(*args, **kws):
+          console.log("add_task")
+          new_task_content = Element("new-task-content")
+          new_task_content.element.value = "hello"
+          headers = {"Content-type": "application/json"}
+          response = requests.get("https://jsonplaceholder.typicode.com/posts/2", headers=headers)
+          console.log("test")
+          json = response.json()
+          console.log(json)
+    </py-script>
+    <div class="py-box">
+        <input id="new-task-content">
+        <button py-click="add_task()" id="new-task-btn" class="py-button">
+            Add Task!
+        </button>
+    </div>
+</body>
+
+</html>

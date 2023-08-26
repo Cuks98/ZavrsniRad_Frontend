@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
+    <script defer src="https://pyscript.net/alpha/pyscript.js"></script>
+</head>
+<body>
+    <py-config>
+        plugins = [
+          "https://pyscript.net/latest/plugins/python/py_tutor.py"
+        ]
+        packages = ["requests", "pyodide-http"]
+    </py-config>
+    <h1>Event listener</h1>
+    <button id="run" type="button">Click me</button>
+    <p id="output"></p>
+    <py-script>
+        from pyodide import create_proxy
+        from js import console, fetch, XMLHttpRequest, Blob
+        import json
+        
+        runButton = document.getElementById('run')
+        output = document.getElementById('output')
+
+        def colorChenge(event):
+            console.log("test")
+            req = XMLHttpRequest.new()
+            req.open("GET", "http://127.0.0.1:8000/api/get-gyms/", False)
+            blob = Blob.new({type : 'application/json'})
+            req.send(blob)
+            a = (req.response)
+            console.log(f'Response: {a}')
+            output.innerHTML = a
+
+        cc = create_proxy(colorChenge)
+        runButton.addEventListener('click', cc)
+    </py-script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gym Management System - Login</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
+    <script defer src="https://pyscript.net/alpha/pyscript.js"></script>
+</head>
+
+<body>
+    <py-config>
+        plugins = [
+          "https://pyscript.net/latest/plugins/python/py_tutor.py"
+        ]
+        packages = ["requests", "pyodide-http"]
+    </py-config>
+
+    <div class="navbar">
+        <div class="logo">GSM</div>
+        <!-- <div class="login"><a href="/login" style="color: white; text-decoration: none;">Login</a></div> -->
+    </div>
+    <div class="welcome-section">
+        <form class="login-form">
+            <input id="email" type="email" placeholder="Email" required>
+            <input id="password" type="password" placeholder="Password" required>
+            <button id="login" type="button">Login</button>
+        </form>
+    </div>
+
+    <py-script>
+        from pyodide import create_proxy
+        from js import console, fetch, XMLHttpRequest, Blob, window
+        import json
+        
+        loginBtn = document.getElementById('login')
+        
+        def login(event):
+            email = document.getElementById('email').value
+            password = document.getElementById('password').value  
+            console.log("login")
+            console.log(email)
+            console.log(password)
+            data = {
+                "email": email,
+                "password": password
+            }
+            console.log(data)
+            req = XMLHttpRequest.new()
+            req.open("POST", "http://127.0.0.1:8000/api/login/", False)
+            req.setRequestHeader("Content-Type", "application/json;charset=UTF-8")
+            blob = Blob.new([json.dumps(data)], {type : 'application/json'})
+            console.log(blob)
+            req.send(blob)
+            a = (req.response)
+            if req.status == 200:
+                window.localStorage.setItem('token', json.loads(a).get('jwt'))
+                window.localStorage.setItem('role', json.loads(a).get('role'))
+                window.localStorage.setItem('id', json.loads(a).get('id'))
+                if json.loads(a).get('role') == 1 or json.loads(a).get('role') == 2:
+                    window.location.href = "/user.html"
+                else:
+                    window.location.href = "/member.html"
+            
+
+        loginEvent = create_proxy(login)
+        loginBtn.addEventListener('click', loginEvent)
+    </py-script>
+</body>
+
+</html>

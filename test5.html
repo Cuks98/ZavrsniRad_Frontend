@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
+    <script defer src="https://pyscript.net/latest/pyscript.js"></script>
+  <!-- <link rel="stylesheet" href="https://pyscript.net/alpha/pyscript.css" />
+  <script defer src="https://pyscript.net/alpha/pyscript.js"></script> -->
+</head>
+
+<body>
+  <div>Your Name</div>
+  <input type="text" id="your_name"/>
+  <div>Project Name</div>
+  <input type="text" id="project_name"/>
+  <div>Purpose Name</div>
+  <input type="text" id="purpose_name"/>
+  <div>Language</div>
+  <input type="text" id="language"/>
+  <div>Media Path</div>
+  <input type="text" id="media_path"/><br>
+  <button id="submit-button" type="submit" pys-onClick="my_function">Submit</button>
+  <div id="out_your_name"></div>
+  <div id="out_project_name"></div>
+  <div id="out_purpose_name"></div>
+  <div id="out_language"></div>
+  <div id="out_media_path"></div>
+
+  <py-script>
+    import asyncio
+    from js import console, fetch, XMLHttpRequest, Blob
+    import json
+    
+    def my_function(*args, **kwargs):
+    
+        console.log(f'args: {args}')
+        console.log(f'kwargs: {kwargs}')
+        
+        your_name = Element('your_name').element.value
+        project_name = Element('project_name').element.value
+        purpose_name = Element('purpose_name').element.value
+        language = Element('language').element.value
+        media_path = Element('media_path').element.value
+        
+        pyscript.write('out_your_name', your_name)
+        pyscript.write('out_project_name', project_name)
+        pyscript.write('out_purpose_name', purpose_name)
+        pyscript.write('out_language', language)
+        pyscript.write('out_media_path', media_path)
+        data = {"your_name": your_name, "project_name": project_name, "purpose_name": purpose_name, "language": language, "media_path": media_path}
+
+        req = XMLHttpRequest.new()
+        req.open("POST", "https://39cb9668a5e2.ngrok.io/test_route", False)
+        blob = Blob.new([json.dumps(data)], {type : 'application/json'})
+        req.send(blob)
+        a = (req.response)
+        console.log(f'Response: {a}')
+        
+
+    </py-script>
+
+  </body>
+</html>
