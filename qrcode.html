@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
+    <script defer src="https://pyscript.net/alpha/pyscript.js"></script>
+</head>
+<body>
+    <img id="qrCode" src="" alt="">
+    <div id="qrCode2">
+
+    </div>
+    <py-env>
+        - qrcode
+        - pillow
+      </py-env>
+      <py-script>
+      import qrcode
+      import base64 
+      
+      # Naprawiam oryginalną zepsutą metodę render_image
+      def render_image(mime, value, meta):
+        data = f"data:{mime};base64,{base64.b64encode(value).decode('utf-8')}"
+        return f"\u003cimg src='{data}'\u003e"
+      
+      img = qrcode.make("Witaj Sekuraku!")
+      
+      # Zwracam referencję do obrazka w ostatniej linii kodu
+      qrCode = Element('qrCode2')
+      qrCode.write(img)
+      </py-script>
+</body>
+</html>

@@ -21,6 +21,10 @@
           "https://pyscript.net/latest/plugins/python/py_tutor.py"
         ]
         packages = ["requests", "pyodide-http"]
+        [[interpreters]]
+        src = "https://cdn.jsdelivr.net/pyodide/v0.23.0/full/pyodide.js"
+        name = "pyodide-0.23.0"
+        lang = "python"
     </py-config>
     <div class="navbar">
         <div class="logo">GSM</div>
@@ -30,37 +34,77 @@
             <i class="fas fa-user"></i>
         </div>
         <div class="user-info">
-            <span class="user-email">member@example.com</span>
-            <div class="user-gyms">
-                <!-- This is where you'd list out the gyms the user is enrolled in -->
-                <ul>
-                    <li>Gym A</li>
-                    <li>Gym B</li>
-                </ul>
+            <h3 id="email" class="user-email">member@example.com</h3>
+            <div>
+                <h4>List of gyms</h4>
             </div>
+            <div id="output" class="list-of-gyms">
+                
+            </div>
+            
             <button id="qrBtn" class="display-qr">Display QR Code</button>
         </div>
     </div>
-    <img id="qrCodeImage"src="images/MyQRCode1.png" alt="">
+    <!-- <img id="qrCodeImage "src="images/MyQRCode1.png" alt=""> -->
+    <div id="qrCode2" class="false">
+
+    </div>
     <py-script>
         from pyodide import create_proxy
-        from js import console, fetch, XMLHttpRequest, Blob, window
+        from js import console, fetch, XMLHttpRequest, Blob, window, document
         import json
         import qrcode
-        import base64 
+        import base64
+        from datetime import datetime as dt
 
-        # Naprawiam oryginalną zepsutą metodę render_image
+        id = window.localStorage.getItem('id')
+
+        email = Element('email')
+        
+
+        def add_task(todo_text):
+            element = document.createElement('span')
+            element.innerText = todo_text
+            document.getElementById("output").append(element)
+
+        req = XMLHttpRequest.new()
+        req.open("GET", f"http://127.0.0.1:8000/api/user/{id}/", False)
+        req.setRequestHeader("Content-Type", "application/json;charset=UTF-8")
+        blob = Blob.new({type : 'application/json'})
+        console.log(blob)
+        req.send(blob)
+        a = (req.response)
+        
+        req2 = XMLHttpRequest.new()
+        req2.open("GET", f"http://127.0.0.1:8000/api/get-user-gyms/{id}/", False)
+        req2.setRequestHeader("Content-Type", "application/json;charset=UTF-8")
+        blob2 = Blob.new({type : 'application/json'})
+        console.log(blob2)
+        req2.send(blob2)
+        b = (req2.response)
+
+        email.write(json.loads(a).get('email'))
+        
+        for entry in json.loads(b):
+            console.log(entry.get('name'))
+            add_task(entry.get('name'))
+
+        qrBtn = document.getElementById('qrBtn')
+
         def render_image(mime, value, meta):
             data = f"data:{mime};base64,{base64.b64encode(value).decode('utf-8')}"
             return f"\u003cimg src='{data}'\u003e"
         
-        qrBtn = document.getElementById('qrBtn')
-        qrCodeImage = document.getElementById('qrCodeImage')
+        img = qrcode.make(f"https://cuks98.github.io/ZavrsniRad_Frontend/is-subscription-valid.html?id={id}")
+        
+        qrCode = Element('qrCode2')
+        qrCode.write(img)
 
         def getQrCode(event):
             console.log("getQrCode")
-            window.location.href = "/test3.html"
-         
+            qrCode.remove_class("false")
+            qrCode.add_class("true")
+        
         qrProxy = create_proxy(getQrCode)
         qrBtn.addEventListener('click', qrProxy)
 

@@ -236,6 +236,63 @@ body, html {
     text-align: center;
 }
 
+#qrCode2{
+    display: flex;
+    justify-content: center;
+}
+
+.list-of-gyms{
+    margin-bottom: 20px;
+}
+
+.list-of-gyms span{
+    margin-bottom: 5px;
+}
+
+.form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f4f4f4;
+}
+
+.register-form {
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+.register-form input,
+.register-form select,
+.register-form button {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.register-form input{
+    padding: 10px 2px!important;
+}
+
+.register-form button {
+    background-color: #007BFF;
+    color: white;
+    cursor: pointer;
+    border: none;
+}
+
+.register-form button:hover {
+    background-color: #0056b3;
+}
+
+
+
 @media screen and (max-width: 768px) {
     /* Mobile-specific styles */
     .navbar {
@@ -269,5 +326,10 @@ body, html {
 
     .date-field {
         font-size: 16px; /* Smaller date font size for mobile view */
+    }
+
+    .register-form {
+        padding: 15px;
+        width: 90%;
     }
 }
