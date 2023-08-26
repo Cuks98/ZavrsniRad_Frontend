@@ -254,7 +254,6 @@ body, html {
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background-color: #f4f4f4;
 }
 
 .register-form {
@@ -291,7 +290,34 @@ body, html {
     background-color: #0056b3;
 }
 
+.password-error-message{
+    color: red;
+    font-size: 12px;
+    margin-top: 5px;
+}
 
+.confirmation-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f4f4f4;
+    padding: 20px;  /* Added padding around the container */
+}
+
+.confirmation-icon {
+    font-size: 5rem;
+    color: #007BFF;
+    margin-bottom: 40px;  /* Increased margin */
+}
+
+.confirmation-message {
+    font-size: 18px;
+    text-align: center;
+    color: #333;
+    max-width: 80%;  /* Limit the width to avoid very long lines on wider screens */
+}
 
 @media screen and (max-width: 768px) {
     /* Mobile-specific styles */
@@ -331,5 +357,12 @@ body, html {
     .register-form {
         padding: 15px;
         width: 90%;
+    }
+
+    .confirmation-icon {
+        font-size: 3rem;
+    }
+    .confirmation-message {
+        font-size: 16px;
     }
 }

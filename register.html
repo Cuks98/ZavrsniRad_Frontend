@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
-    <script defer src="https://pyscript.net/latest/pyscript.js"></script>
+    <script defer src="https://pyscript.net/alpha/pyscript.js"></script>
 </head>
 
 <body>
@@ -28,17 +28,100 @@
     </div>
     <div class="form-container">
         <form class="register-form" action="/register" method="post">
-            <input type="email" name="email" placeholder="Email" required>
-            <input type="password" name="password" placeholder="Password" required>
-            <input type="password" name="confirm_password" placeholder="Confirm Password" required>
-            <select name="user_type">
-                <option value="user">User</option>
-                <option value="admin">Admin</option>
-                <!-- Add other options if needed -->
+            <input id="email" type="email" name="email" placeholder="Email" required>
+            <input id="password"type="password" name="password" placeholder="Password" required>
+            <input id="confirm_password" type="password" name="confirm_password" placeholder="Confirm Password" required>
+            <p id="password-error-message" class="password-error-message false">Passwords don't match!</p>
+            <label for="dropdown">Gym</label>
+            <select id="dropdown" name="dropdown">
+                
             </select>
-            <button type="submit">Register</button>
+            <button id="register" type="submit">Register</button>
+            <p id="registration-error-message" class="password-error-message false">Registration failed please chack your data and try again</p>
         </form>
     </div>
+    <py-script>
+        from js import console, fetch, XMLHttpRequest, Blob, window, document
+        import json
+        from pyodide import create_proxy
+        
+        dropdown = Element('dropdown')
+
+        req = XMLHttpRequest.new()
+        req.open("GET", f"http://127.0.0.1:8000/api/get-gyms/", False)
+        req.setRequestHeader("Content-Type", "application/json;charset=UTF-8")
+        blob = Blob.new({type : 'application/json'})
+        console.log(blob)
+        req.send(blob)
+        a = (req.response)
+
+        dict = json.loads(a)
+
+        console.log(dict['1']['name'])
+        for key in dict:
+            option = document.createElement('option')
+            option.value = key
+            option.text = dict[key]['name']
+            document.getElementById('dropdown').add(option)
+            console.log(key)
+            console.log(dict[key]['name'])
+
+        register_btn = document.getElementById('register')
+        
+        def register(event):
+            console.log("register")
+            email = Element('email').value
+            password = Element('password').value
+            confirm_password = Element('confirm_password').value
+            gym = Element('dropdown').value
+            if password != confirm_password:
+                console.log("passwords don't match")
+                password_error_message = Element('password-error-message')
+                password_error_message.remove_class("false")
+                password_error_message.add_class("true")
+            else:
+                data = {
+                    "email": email,
+                    "password": password,
+                    "role_id": 3
+                }
+                postReq = XMLHttpRequest.new()
+                postReq.open("POST", "http://127.0.0.1:8000/api/add-new-user/", False)
+                postReq.setRequestHeader("Content-Type", "application/json;charset=UTF-8")
+                postBlob = Blob.new([json.dumps(data)], {type : 'application/json'})
+                console.log(postBlob)
+                postReq.send(postBlob)
+                b = (postReq.response)
+                if postReq.status == 200:
+                    id = json.loads(b).get('id')
+                    console.log(id)
+                    console.log(gym)
+                    data2 = {
+                        "user": id,
+                        "gym": gym
+                    }
+                    console.log(data)
+                    req2 = XMLHttpRequest.new()
+                    req2.open("POST", "http://127.0.0.1:8000/api/add-user-to-gym/", False)
+                    req2.setRequestHeader("Content-Type", "application/json;charset=UTF-8")
+                    blob2 = Blob.new([json.dumps(data2)], {type : 'application/json'})
+                    console.log(blob2)
+                    req2.send(blob2)
+                    a = (req2.response)
+                    if req2.status == 201:
+                        window.location.href = "/checkEmail.html"
+                    else:
+                        registration_error_message = Element('registration-error-message')
+                        registration_error_message.remove_class("false")
+                        registration_error_message.add_class("true")
+                else:
+                    registration_error_message = Element('registration-error-message')
+                    registration_error_message.remove_class("false")
+                    registration_error_message.add_class("true")
+        
+        register_event = create_proxy(register)
+        register_btn.addEventListener('click', register_event)
+    </py-script>
 
 </body>
 
